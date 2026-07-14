@@ -1,3 +1,0 @@
-[0.000000] (-) TimerEvent: {}
-[0.000108] (-) JobUnselected: {'identifier': 'multithreaded_robot_status_monitor'}
-[0.000233] (-) EventReactorShutdown: {}
