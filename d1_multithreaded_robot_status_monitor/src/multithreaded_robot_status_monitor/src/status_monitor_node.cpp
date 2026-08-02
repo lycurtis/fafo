@@ -1,4 +1,11 @@
 // PART 3: MultiThreaded
+
+/*
+MultiThreadedExecutor  = has multiple worker threads
+Callback groups        = who is allowed to run at the same time
+Mutex                  = still protects shared harrison data
+*/
+
 #include "rclcpp/rclcpp.hpp"
 #include <thread>
 #include <string>
@@ -19,18 +26,24 @@ public:
   StatusMonitorNode() : Node("status_monitor"){ // constructor Node("node_name")
     // Initialize publishers, subscribers, or timers here
 
+    // Create a Reentrant callback group to allow concurrent execution
+    callback_group_ = this->create_callback_group(rclcpp::CallbackGroupType::Reentrant);
+
     // Create a wall timer firing every specified Period
     sensor_timer_ = this->create_wall_timer(
         std::chrono::milliseconds(simTempPeriod), 
-        std::bind(&StatusMonitorNode::timer_callback_simTemp, this)
+        std::bind(&StatusMonitorNode::timer_callback_simTemp, this),
+        callback_group_
     );
     motor_timer_ = this->create_wall_timer(
         std::chrono::milliseconds(simMotorPeriod), 
-        std::bind(&StatusMonitorNode::timer_callback_simMotor, this)
+        std::bind(&StatusMonitorNode::timer_callback_simMotor, this),
+        callback_group_
     );
     status_timer_ = this->create_wall_timer(
         std::chrono::milliseconds(simStatusPeriod), 
-        std::bind(&StatusMonitorNode::timer_callback_simStatus, this)
+        std::bind(&StatusMonitorNode::timer_callback_simStatus, this),
+        callback_group_
     );
 
   }
@@ -40,6 +53,9 @@ private:
   // Declare member variables, publishers, subscriptions, or timers here
   int globalThreadCnt = 0;
   std::mutex mtx;
+
+  // callback group member variable (who is allowed to run at the same time)
+  rclcpp::CallbackGroup::SharedPtr callback_group_;
 
   // Timer member variable
   rclcpp::TimerBase::SharedPtr sensor_timer_;
@@ -130,7 +146,13 @@ int main(int argc, char * argv[])
 {
   rclcpp::init(argc, argv);
   auto node = std::make_shared<StatusMonitorNode>();
-  rclcpp::spin(node);
+
+  // Instantiate the MultiThreadedExecutor
+  rclcpp::executors::MultiThreadedExecutor executor(rclcpp::ExecutorOptions(), 0); // passing 0 means pick a default thread count
+
+  executor.add_node(node);
+  executor.spin();
+
   rclcpp::shutdown();
   return 0;
 }

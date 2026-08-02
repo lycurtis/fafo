@@ -1,1 +1,1 @@
-# The more you f around the more you f out.
+# The more you **** around the more you find out.
