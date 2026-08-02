@@ -78,3 +78,24 @@ Result
 64.7864
 [motor] thread=2 finished, speed=4.3959
 ```
+
+
+## Indepdently test each different parts (Each file gets its own executable)
+
+Rebuild then source:
+```bash
+colcon build --packages-select multithreaded_robot_status_monitor
+source install/setup.bash
+```
+
+Run whichever version
+```bash
+# Multithreaded ROS (final)
+ros2 run multithreaded_robot_status_monitor status_monitor_node
+
+# Single-threaded ROS
+ros2 run multithreaded_robot_status_monitor status_monitor_node_single_thread
+
+# Plain std::thread practice
+ros2 run multithreaded_robot_status_monitor status_monitor_threads
+```

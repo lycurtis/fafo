@@ -22,17 +22,19 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
-add_executable(status_monitor_node
-  src/status_monitor_node.cpp
-)
+# Each .cpp has its own main — build them as separate executables
+add_executable(status_monitor_node src/status_monitor_node.cpp)
+add_executable(status_monitor_node_single_thread src/status_monitor_node_single_thread.cpp)
+add_executable(status_monitor_threads src/status_monitor_threads.cpp)
 
-ament_target_dependencies(status_monitor_node
-  rclcpp
-  std_msgs
-)
+ament_target_dependencies(status_monitor_node rclcpp std_msgs)
+ament_target_dependencies(status_monitor_node_single_thread rclcpp std_msgs)
+ament_target_dependencies(status_monitor_threads rclcpp std_msgs)
 
 install(TARGETS
   status_monitor_node
+  status_monitor_node_single_thread
+  status_monitor_threads
   DESTINATION lib/${PROJECT_NAME}
 )
 

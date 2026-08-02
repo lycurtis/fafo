@@ -38,8 +38,8 @@ public:
 
 private:
   // Declare member variables, publishers, subscriptions, or timers here
-  int globalThreadCnt = 0;
-  std::mutex mtx;
+  int globalThreadCnt_ = 0;
+  std::mutex mtx_;
 
   // Timer member variable
   rclcpp::TimerBase::SharedPtr sensor_timer_;
@@ -53,7 +53,7 @@ private:
     int motor_updates{0};
   };
 
-  RobotState harrison;
+  RobotState harrison_;
 
   double genRandDouble(double lowerBound, double upperBound){
     static std::mt19937 generator{std::random_device{}()};
@@ -64,64 +64,64 @@ private:
 
   // The callback function
   void timer_callback_simTemp(){
-    mtx.lock();
-    globalThreadCnt++;
+    mtx_.lock();
+    globalThreadCnt_++;
 
-    harrison.temperature = genRandDouble(50.0, 100.0);
+    harrison_.temperature = genRandDouble(50.0, 100.0);
     RCLCPP_INFO(
         this->get_logger(), 
         "[sensor] thread=%d new temperature=%.1f",
-        globalThreadCnt,
-        harrison.temperature
+        globalThreadCnt_,
+        harrison_.temperature
     );
-    harrison.sensor_updates += 1;
+    harrison_.sensor_updates += 1;
 
-    mtx.unlock();
+    mtx_.unlock();
   }
 
   void timer_callback_simMotor(){
-    mtx.lock();
-    globalThreadCnt++;
+    mtx_.lock();
+    globalThreadCnt_++;
 
     RCLCPP_INFO(
         this->get_logger(),
         "[motor] thread=%d starting slow motor calculation",
-        globalThreadCnt
+        globalThreadCnt_
     );
 
-    mtx.unlock();
+    mtx_.unlock();
 
     std::this_thread::sleep_for(std::chrono::milliseconds(simMotorActionBlockingPeriod)); // blocking 
 
-    mtx.lock();
+    mtx_.lock();
 
-    harrison.motor_speed = genRandDouble(0.1, 9.9);
+    harrison_.motor_speed = genRandDouble(0.1, 9.9);
     RCLCPP_INFO(
         this->get_logger(),
         "[motor] thread=%d finished, speed=%.1f",
-        globalThreadCnt,
-        harrison.motor_speed
+        globalThreadCnt_,
+        harrison_.motor_speed
     );
-    harrison.motor_updates += 1;
+    harrison_.motor_updates += 1;
 
-    mtx.unlock();
+    mtx_.unlock();
   }
 
   void timer_callback_simStatus(){
-    mtx.lock();
-    globalThreadCnt++;
+    mtx_.lock();
+    globalThreadCnt_++;
 
     RCLCPP_INFO(
         this->get_logger(),
         "[status] thread=%d temp=%.1f temp_updates=%d speed=%.1f motor_updates=%d",
-        globalThreadCnt,
-        harrison.temperature,
-        harrison.sensor_updates,
-        harrison.motor_speed,
-        harrison.motor_updates
+        globalThreadCnt_,
+        harrison_.temperature,
+        harrison_.sensor_updates,
+        harrison_.motor_speed,
+        harrison_.motor_updates
     );
 
-    mtx.unlock();
+    mtx_.unlock();
   }
 
 };
