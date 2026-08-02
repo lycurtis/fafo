@@ -29,6 +29,29 @@ ros2 run multithreaded_robot_status_monitor status_monitor_node
 ```
 
 
+## Learning notes
+
+### `.` vs `->` (member access)
+
+`.` and `->` both mean “access a member,” but they depend on what you have on the left.
+
+| You have | Use | Example |
+|---|---|---|
+| An **object** (or reference) | `.` | `harrison.temperature` |
+| A **pointer** to an object | `->` | `robot->temperature` |
+
+`robot->temperature` is shorthand for `(*robot).temperature`.
+
+In the threads practice version (`status_monitor_threads.cpp`), helpers took `RobotState *robot`, so they used `->`.  
+In the ROS node (`status_monitor_node.cpp`), `harrison` is a class **member object**, not a pointer, so use `.`:
+
+```cpp
+harrison.temperature = ...;
+harrison.sensor_updates += 1;
+```
+
+Rule of thumb: if the variable is declared with `*`, use `->`; otherwise use `.`.
+
 ## Gotchas
 
 1. Realized that I cannot have print statements inside of the thread function

@@ -1,4 +1,4 @@
-// PART 3: MultiThreaded
+// PART 2: Single Threaded implementation, the 700 ms Motor start sleep is still blocking thus no status lines appear during that gap
 #include "rclcpp/rclcpp.hpp"
 #include <thread>
 #include <string>
