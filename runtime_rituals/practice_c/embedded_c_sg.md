@@ -1,7 +1,3 @@
-Based on the recruiter’s wording, **do not spend your remaining time grinding graph algorithms or dynamic programming**. This sounds like a practical C/embedded coding screen: implement small components from scratch, manipulate memory safely, and diagnose imperfect code.
-
-Recent Anduril candidate reports also describe a mixture of embedded coding, general coding, and debugging, including working with existing circular-buffer-style code and questions involving memory management or concurrency. Treat those reports as anecdotal rather than guaranteed interview content. ([Glassdoor][1])
-
 ## Highest-priority topics
 
 ### 1. Pointers, arrays, and pointer arithmetic
@@ -124,8 +120,6 @@ after validating the shift count.
 ---
 
 ### 3. Circular/ring buffers
-
-This is probably the single most valuable embedded structure to practice. An Anduril interview report specifically mentions debugging a circular queue with a reader and writer, though that report involved C++. ([Glassdoor][1])
 
 Be able to implement a fixed-capacity byte ring buffer:
 
@@ -419,8 +413,6 @@ In priority order:
 11. Implement a byte-wise checksum or CRC-like loop.
 12. Merge or compact sorted arrays in place.
 
-You should also do one or two ordinary algorithm questions involving arrays, hash-style lookup, or two pointers. A recent Anduril embedded interview report described one general coding question in addition to an embedded question and debugging question, so completely ignoring standard coding problems would be risky. ([Glassdoor][3])
-
 Reasonable general problems:
 
 * Two Sum, including a simple (O(n^2)) C version if no hash table is available.
@@ -558,6 +550,4 @@ Spend roughly:
 
 The strongest bet is that you will be asked to write a modest C function whose algorithm is not especially difficult, but whose correctness depends on careful pointer use, bounds checking, bit operations, wraparound, or integer behavior.
 
-[1]: https://www.glassdoor.com/Interview/1-Interviewer-first-asked-several-C-short-answer-questions-relating-to-memory-management-and-concurrency-concepts-2-Gi-QTN_6820510.htm?utm_source=chatgpt.com "Anduril Interview Question: 1. Interviewer ..."
 [2]: https://www.embeddedrelated.com/showarticle/1503.php?utm_source=chatgpt.com "Cracking the (embedded) Coding Interview - Manasi Rajan"
-[3]: https://www.glassdoor.com/Interview/Anduril-Senior-Embedded-Software-Engineer-Interview-Questions-EI_IE3546800.0%2C7_KO8%2C41.htm?utm_source=chatgpt.com "Anduril Senior Embedded Software Engineer interview ..."
