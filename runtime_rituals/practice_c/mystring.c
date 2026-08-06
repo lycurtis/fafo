@@ -31,7 +31,13 @@
 size_t my_strlen(const char *s)
 {
     (void)s;
-    return 0; /* TODO */
+    /* TODO */
+
+    int char_count = 0;
+    for(int i = 0; s[i] != '\0'; i++){
+        char_count++;
+    }
+    return char_count; 
 }
 
 /*
@@ -42,7 +48,19 @@ size_t my_strlen(const char *s)
 size_t my_strnlen(const char *s, size_t maxlen)
 {
     (void)s; (void)maxlen;
-    return 0; /* TODO */
+    /* TODO */
+
+    size_t count = 0;
+
+    for(size_t i = 0; i < maxlen; i++){
+        if(s[i] != '\0'){
+            count++;
+        }
+        else{
+            break;
+        }
+    }
+    return count; 
 }
 
 /*
@@ -51,8 +69,63 @@ size_t my_strnlen(const char *s, size_t maxlen)
  */
 void *my_memcpy(void *dst, const void *src, size_t n)
 {
-    (void)src; (void)n;
-    return dst; /* TODO */
+    // (void)src; (void)n;
+
+    // NOTE: The parameters are void *, but you can't dereference or index a void *. What do you need to do before you can read and write individual bytes?
+    // char * is a good generic replacement since char is 1 byte
+    /**
+     * BUT we use unsigned char instead of char because 
+     *
+    * Why unsigned char * and not char * or void *:
+    *
+    *   void *        - can't be dereferenced or indexed; no size to step by.
+    *
+    *   aliasing      - the standard lets an object be accessed through a
+    *                   character-type lvalue regardless of its real type
+    *                   (C11 6.5p7). Any other pointer type would be strict-
+    *                   aliasing UB. This exemption is what makes mem* functions
+    *                   expressible in C: the caller may pass a struct, a double,
+    *                   a packet buffer.
+    *
+    *   signedness    - plain char's signedness is implementation-defined:
+    *                   signed on x86, unsigned on most ARM ABIs. unsigned char
+    *                   is defined everywhere.
+    *
+    *   representation- unsigned char is guaranteed to have no padding bits and
+    *                   no trap representations, so every bit pattern is a valid
+    *                   value and a round-trip can't corrupt data.
+    *
+    * Signedness only matters for memcmp (bytes compare AS unsigned char, so
+    * 0x80 > 0x01; a signed load would sign-extend to -128 and flip the result).
+    * For memcpy/memmove the copy is bit-identical either way -- but use
+    * unsigned char anyway, for consistency and for the representation guarantee.
+    */
+    
+    // unsigned char *dst_cursor = dst;
+    // const unsigned char *src_cursor = src;
+
+    // for(size_t i = 0; i < n; i++){
+    //     dst_cursor[i] = src_cursor[i];
+    // }
+
+    // return dst;
+
+    /* Cleaner solution */
+    if(dst == NULL) return NULL;
+
+    unsigned char *char_dst = (unsigned char*) dst;
+    unsigned char *char_src = (unsigned const char*) src;
+
+    for(size_t i = 0; i < n; i++){
+        char_dst[i] = char_src[i];
+    }
+    return dst;
+
+    /**
+     * Look at what happens if you run this exact loop with dst = src + 1 and n = 10, tracing byte by byte. 
+     * Then try dst = src - 1. One of those two is fine, the other corrupts. That asymmetry is the whole problem.
+     * Solution: memmove
+     */
 }
 
 /*
@@ -62,8 +135,27 @@ void *my_memcpy(void *dst, const void *src, size_t n)
  */
 void *my_memmove(void *dst, const void *src, size_t n)
 {
-    (void)src; (void)n;
-    return dst; /* TODO */
+    // (void)src; (void)n;
+
+    /* TODO */
+    if(dst == NULL) return NULL;
+
+    unsigned char *char_dst = (unsigned char*) dst;
+    unsigned char *char_src = (unsigned const char*) src;
+
+    unsigned char* tmp = calloc(n, sizeof(*tmp));
+
+    for(size_t i = 0; i < n; i++){
+        tmp[i] = char_src[i];
+        
+    }
+    for(size_t i = 0; i < n; i++){
+        char_dst[i] = tmp[i];
+        
+    }
+    free(tmp);
+    return dst;
+
 }
 
 /*
