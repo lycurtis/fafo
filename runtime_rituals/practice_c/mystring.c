@@ -133,29 +133,86 @@ void *my_memcpy(void *dst, const void *src, size_t n)
  * result must be as if src were first copied to a temporary buffer.
  * Returns dst.
  */
+// void *my_memmove(void *dst, const void *src, size_t n)
+// {
+//     // (void)src; (void)n;
+
+//     /* TODO */
+//     if(dst == NULL) return NULL;
+
+//     unsigned char *char_dst = (unsigned char*) dst;
+//     unsigned char *char_src = (unsigned const char*) src;
+
+//     unsigned char* tmp = calloc(n, sizeof(*tmp));
+
+//     for(size_t i = 0; i < n; i++){
+//         tmp[i] = char_src[i];
+        
+//     }
+//     for(size_t i = 0; i < n; i++){
+//         char_dst[i] = tmp[i];
+        
+//     }
+//     free(tmp);
+//     return dst;
+
+// }
+
+/*
+Problem with this implementation:
+1. Stack overflow. unsigned char tmp[n] allocates n bytes on the stack. 
+   Real memmove gets called with large n (kilobytes, megabytes). 
+   A VLA that big blows the stack. memcpy/memmove must handle arbitrary sizes.
+2. It defeats the point. You can correctly handle overlap by copying through a temp buffer 
+   the logic is sound — but the standard, allocation-free way to handle overlapping regions 
+   is to pick the copy direction based on the pointers.
+*/
+// void *my_memmove(void *dst, const void *src, size_t n)
+// {
+//     // (void)src; (void)n;
+
+//     /* TODO */
+//     if(dst == NULL || n == 0) return NULL;
+
+//     unsigned char *char_dst = (unsigned char*) dst;
+//     unsigned char *char_src = (unsigned const char*) src;
+
+//     unsigned char tmp[n];
+//     unsigned char *p = tmp;
+
+//     for(size_t i = 0; i < n; i++){
+//         p[i] = char_src[i]; // (*(p+i) = *(char_src+i)); Copy from source to temporary
+        
+//     }
+
+//     p = tmp; //reset pointer to beginning of tmp
+//     while(n--) {
+//         *(char_dst++) = *(p++);
+//     }
+//     return dst;
+// }
+
 void *my_memmove(void *dst, const void *src, size_t n)
 {
     // (void)src; (void)n;
 
     /* TODO */
-    if(dst == NULL) return NULL;
+    if(dst == NULL || n == 0) return NULL;
 
     unsigned char *char_dst = (unsigned char*) dst;
     unsigned char *char_src = (unsigned const char*) src;
 
-    unsigned char* tmp = calloc(n, sizeof(*tmp));
-
-    for(size_t i = 0; i < n; i++){
-        tmp[i] = char_src[i];
-        
+    if(dst < src){
+        for(size_t i = 0; i < n; i++){
+            char_dst[i] = char_src[i];
+        }
     }
-    for(size_t i = 0; i < n; i++){
-        char_dst[i] = tmp[i];
-        
+    else{
+        for(size_t i = n; i > 0; i--){
+            char_dst[i-1] = char_src[i-1];
+        }
     }
-    free(tmp);
     return dst;
-
 }
 
 /*
